@@ -1,5 +1,5 @@
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import hashlib
 import base64
@@ -24,11 +24,18 @@ def shortner(long_url):
     b64 = base64.b64encode(hashed_string)
     return (b64.decode('utf-8'))
 
-
+def error_message(message):
+    res = jsonify({'message':message})
+    res.status_code = 400
+    return res
 
 @app.route("/home")
 def hello():
     return "Hello World"
+
+@app.route("/add")
+def add_url(long_url):
+    if not request.json or "url" not in request.json:
 
 
 if __name__ == '__main__':
