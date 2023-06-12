@@ -42,9 +42,9 @@ def add_url():
     if not request.json:
         msg = "Request body MUST be in json format"
         return error_message(msg)
-    # if "url" not in request.json:
-    #     msg = "url must be a key in your json request body"
-    #     return error_message(msg)
+    if "url" not in request.json:
+        msg = "url must be a key in your json request body"
+        return error_message(msg)
     # long_url = request.json["url"]
     # shorten_url = shortner(long_url)
     # new_url = Test(short_url=shorten_url, long_url= long_url)
