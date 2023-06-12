@@ -1,5 +1,5 @@
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect
 from flask_sqlalchemy import SQLAlchemy
 import hashlib
 import base64
@@ -33,9 +33,14 @@ def error_message(message):
     res.status_code = 400
     return res
 
+@app.route("/", methods = ["POST"])
+def challenge():
+    challenge =  "https://codingchallenges.fyi/challenges/challenge-url-shortener"
+    return redirect(challenge,302)
+
 @app.route("/home")
-def hello():
-    return "Hello World"
+def home():
+    return "Hello, World"
 
 @app.route("/add", methods = ['POST'])
 def add_url():
@@ -46,6 +51,7 @@ def add_url():
         msg = "url must be a key in your json request body"
         return error_message(msg)
     long_url = request.json["url"]
+
     shorten_url = shortner(long_url)
     new_url = Test(short_url=shorten_url, long_url= long_url)
     db.session.add(new_url)
