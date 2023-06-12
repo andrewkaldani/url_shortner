@@ -15,6 +15,10 @@ class Test(db.Model):
     id = db.Column(db.BigInteger, primary_key=True)
     short_url = db.Column(db.String(100))
     long_url = db.Column(db.Text)
+    # def __init__(self, short_url, long_url):
+    #     self.short_url = short_url
+    #     self.long_url = long_url
+
 
 
 
@@ -33,11 +37,29 @@ def error_message(message):
 def hello():
     return "Hello World"
 
-@app.route("/add")
-def add_url(long_url):
-    if not request.json or "url" not in request.json:
+@app.route("/add", methods = ['POST'])
+def add_url():
+    if not request.json:
+        msg = "Request body MUST be in json format"
+        return error_message(msg)
+    # if "url" not in request.json:
+    #     msg = "url must be a key in your json request body"
+    #     return error_message(msg)
+    # long_url = request.json["url"]
+    # shorten_url = shortner(long_url)
+    # new_url = Test(short_url=shorten_url, long_url= long_url)
+    # db.session.add(new_url)
+    # db.session.commit()
+    # res = {
+    #     "key": shorten_url,
+    #     "long_url": long_url
+    # }
+    # return jsonify(res)
 
 
 if __name__ == '__main__':
+    # from hello import app, db
+    # app.app_context().push()
+    # db.create_all()
     app.run(port=5000)
    
