@@ -7,7 +7,7 @@ import random
 app = Flask(__name__)
 
 
-app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:pass@localhost:5432/shortner'
+app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:remonnumber1@localhost:5432/shortner'
 app.config["SQLALCHEMY_ECHO"] = True
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
@@ -26,7 +26,7 @@ def shortner(long_url):
     b64 = base64.b64encode(hashed_string)
     b64= (b64.decode('utf-8'))
     shuffle = ''.join(random.sample(b64, len(b64)))
-    return (shuffle[:9])
+    return (shuffle[:7])
 
 def error_message(message):
     res = jsonify({'message':message})
@@ -52,16 +52,26 @@ def add_url():
         return error_message(msg)
     long_url = request.json["url"]
 
-    shorten_url = shortner(long_url)
-    new_url = Test(short_url=shorten_url, long_url= long_url)
-    db.session.add(new_url)
-    db.session.commit()
-    res = jsonify({
-        "key": shorten_url,
-        "long_url": long_url
-    })
-    res.status_code = 302
-    return res
+    url_db = Test.query.filter(Test.long_url == long_url).first()
+    if url_db is None:
+        shorten_url = shortner(long_url)
+        new_url = Test(short_url=shorten_url, long_url= long_url)
+        db.session.add(new_url)
+        db.session.commit()
+        res = jsonify({
+            "key": shorten_url,
+            "long_url": long_url,
+            "short_url": "https://localhost:5000/"+shorten_url
+        })
+        res.status_code = 302
+        return res
+    else:
+        res = jsonify({
+            "msg":"url already exsists",
+            "short_url":url_db.short_url,
+            "long_url": url_db.long_url
+        })
+        return res
 
 
 if __name__ == '__main__':
