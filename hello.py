@@ -1,13 +1,15 @@
 
 from flask import Flask, request, jsonify, redirect
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
 import hashlib
 import base64
 import random
+import os
 app = Flask(__name__)
 
-
-app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:pass@localhost:5432/shortner'
+load_dotenv()
+app.config['SQLALCHEMY_DATABASE_URI']= os.getenv("DB_URI")
 app.config["SQLALCHEMY_ECHO"] = True
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
