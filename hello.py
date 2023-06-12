@@ -58,8 +58,8 @@ def add_url():
 
 
 if __name__ == '__main__':
-    # from hello import app, db
-    # app.app_context().push()
-    # db.create_all()
+    from hello import app, db
+    app.app_context().push()
+    db.create_all()
     app.run(port=5000)
    
