@@ -75,7 +75,15 @@ def add_url():
         })
         return res
 
-
+@app.route("/redirect/<shorturl>", methods = ["POST"])
+def redirect_url(shorturl):
+    check = Test.query.filter(Test.short_url == shorturl).first()
+    if check is None:
+        msg = "This short url does not exist: "
+        return error_message(msg)
+    else:
+        return redirect(check.long_url,302)
+    
 if __name__ == '__main__':
     from hello import app, db
     app.app_context().push()
