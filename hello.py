@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify, redirect
 from flask_sqlalchemy import SQLAlchemy
 import hashlib
 import base64
+import random
 app = Flask(__name__)
 
 
@@ -19,14 +20,13 @@ class Test(db.Model):
         self.short_url = short_url
         self.long_url = long_url
 
-
-
-
 def shortner(long_url):
     hashed_string = hashlib.sha256(long_url.encode('utf-8')).digest()
     print(hashed_string)
     b64 = base64.b64encode(hashed_string)
-    return (b64.decode('utf-8'))
+    b64= (b64.decode('utf-8'))
+    shuffle = ''.join(random.sample(b64, len(b64)))
+    return (shuffle[:9])
 
 def error_message(message):
     res = jsonify({'message':message})
