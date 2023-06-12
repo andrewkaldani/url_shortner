@@ -7,7 +7,7 @@ import random
 app = Flask(__name__)
 
 
-app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:remonnumber1@localhost:5432/shortner'
+app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:pass@localhost:5432/shortner'
 app.config["SQLALCHEMY_ECHO"] = True
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
