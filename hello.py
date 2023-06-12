@@ -15,9 +15,9 @@ class Test(db.Model):
     id = db.Column(db.BigInteger, primary_key=True)
     short_url = db.Column(db.String(100))
     long_url = db.Column(db.Text)
-    # def __init__(self, short_url, long_url):
-    #     self.short_url = short_url
-    #     self.long_url = long_url
+    def __init__(self, short_url, long_url):
+        self.short_url = short_url
+        self.long_url = long_url
 
 
 
