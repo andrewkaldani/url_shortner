@@ -56,11 +56,12 @@ def add_url():
     new_url = Test(short_url=shorten_url, long_url= long_url)
     db.session.add(new_url)
     db.session.commit()
-    res = {
+    res = jsonify({
         "key": shorten_url,
         "long_url": long_url
-    }
-    return jsonify(res)
+    })
+    res.status_code = 302
+    return res
 
 
 if __name__ == '__main__':
