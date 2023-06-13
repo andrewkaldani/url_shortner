@@ -51,6 +51,9 @@ def home():
            "https://github.com/andrewkaldani/url_shortner"
            )
     return msg
+@app.route("/solution", methods = ["GET"])
+def my_soltion():
+    return redirect("https://github.com/andrewkaldani/url_shortner")
 
 @app.route("/add", methods = ['POST'])
 def add_url():
