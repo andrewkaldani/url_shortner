@@ -28,7 +28,9 @@ def shortner(long_url):
     b64 = base64.b64encode(hashed_string)
     b64= (b64.decode('utf-8'))
     shuffle = ''.join(random.sample(b64, len(b64)))
-    return (shuffle[:7])
+    final_url = shuffle.replace("/", "")
+    final_url = shuffle.replace("=","")
+    return final_url[:7]
 
 def error_message(message):
     res = jsonify({'message':message})
