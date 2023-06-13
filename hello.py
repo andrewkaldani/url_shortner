@@ -22,14 +22,14 @@ class Test(db.Model):
         self.short_url = short_url
         self.long_url = long_url
 
-# def shortner(long_url):
-#     hashed_string = hashlib.sha256(long_url.encode('utf-8')).digest()
-#     b64 = base64.b64encode(hashed_string)
-#     b64= (b64.decode('utf-8'))
-#     shuffle = ''.join(random.sample(b64, len(b64)))
-#     final_url = shuffle.replace("/", "")
-#     final_url = final_url.replace("=","")
-#     return final_url[:7]
+def shortner(long_url):
+    hashed_string = hashlib.sha256(long_url.encode('utf-8')).digest()
+    b64 = base64.b64encode(hashed_string)
+    b64= (b64.decode('utf-8'))
+    shuffle = ''.join(random.sample(b64, len(b64)))
+    final_url = shuffle.replace("/", "")
+    final_url = final_url.replace("=","")
+    return final_url[:7]
 
 def error_message(message):
     res = jsonify({'message':message})
