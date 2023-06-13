@@ -22,15 +22,14 @@ class Test(db.Model):
         self.short_url = short_url
         self.long_url = long_url
 
-def shortner(long_url):
-    hashed_string = hashlib.sha256(long_url.encode('utf-8')).digest()
-    print(hashed_string)
-    b64 = base64.b64encode(hashed_string)
-    b64= (b64.decode('utf-8'))
-    shuffle = ''.join(random.sample(b64, len(b64)))
-    final_url = shuffle.replace("/", "")
-    final_url = shuffle.replace("=","")
-    return final_url[:7]
+# def shortner(long_url):
+#     hashed_string = hashlib.sha256(long_url.encode('utf-8')).digest()
+#     b64 = base64.b64encode(hashed_string)
+#     b64= (b64.decode('utf-8'))
+#     shuffle = ''.join(random.sample(b64, len(b64)))
+#     final_url = shuffle.replace("/", "")
+#     final_url = final_url.replace("=","")
+#     return final_url[:7]
 
 def error_message(message):
     res = jsonify({'message':message})
@@ -44,7 +43,13 @@ def challenge():
 
 @app.route("/home")
 def home():
-    return "Hello, World"
+    msg = ("Welcome to my URL shortner! This is part of John Crickett's coding "
+           "challenges. You can view this challenge here " 
+           "https://codingchallenges.fyi/challenges/challenge-url-shortener "
+           "You can also view my github solution to this here "
+           "https://github.com/andrewkaldani/url_shortner"
+           )
+    return msg
 
 @app.route("/add", methods = ['POST'])
 def add_url():
