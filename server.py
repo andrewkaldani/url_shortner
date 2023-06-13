@@ -65,7 +65,7 @@ def add_url():
     url_db = Url.query.filter(Url.long_url == long_url).first()
     if url_db is None:
         key = shortner(long_url)
-        shorten_url = "https://localhost:5000/"+key
+        shorten_url = "https://localhost:5000"+key
         new_url = Url(key=key, short_url=shorten_url, long_url= long_url)
         db.session.add(new_url)
         db.session.commit()
