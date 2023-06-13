@@ -103,7 +103,7 @@ def delete_url():
         msg = "url must be a key in your json request body"
         return error_message(msg)
     url = request.json['url']
-    check = Url.query.filter(Url.key == url).first()
+    check = Url.query.filter((Url.key == url)|(Url.long_url==url)).first()
     if check is None:
         res = jsonify( "This url does not exist there is nothing to delete")
         res.status_code = 404
