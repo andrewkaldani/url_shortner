@@ -14,11 +14,13 @@ app.config["SQLALCHEMY_ECHO"] = True
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
-class Test(db.Model):
+class Url(db.Model):
     id = db.Column(db.BigInteger, primary_key=True)
+    key = db.Column(db.String(100))
     short_url = db.Column(db.String(100))
     long_url = db.Column(db.Text)
-    def __init__(self, short_url, long_url):
+    def __init__(self, key, short_url, long_url):
+        self.key = key 
         self.short_url = short_url
         self.long_url = long_url
 
@@ -36,7 +38,7 @@ def error_message(message):
     res.status_code = 400
     return res
 
-@app.route("/", methods = ["POST"])
+@app.route("/", methods = ["GET"])
 def challenge():
     challenge =  "https://codingchallenges.fyi/challenges/challenge-url-shortener"
     return redirect(challenge,302)
@@ -61,30 +63,32 @@ def add_url():
         return error_message(msg)
     long_url = request.json["url"]
 
-    url_db = Test.query.filter(Test.long_url == long_url).first()
+    url_db = Url.query.filter(Url.long_url == long_url).first()
     if url_db is None:
-        shorten_url = shortner(long_url)
-        new_url = Test(short_url=shorten_url, long_url= long_url)
+        key = shortner(long_url)
+        shorten_url = "https://localhost:5000"+key
+        new_url = Url(key=key, short_url=shorten_url, long_url= long_url)
         db.session.add(new_url)
         db.session.commit()
         res = jsonify({
-            "key": shorten_url,
+            "key": key,
             "long_url": long_url,
-            "short_url": "https://localhost:5000/"+shorten_url
+            "short_url": shorten_url
         })
         res.status_code = 302
         return res
     else:
         res = jsonify({
             "msg":"url already exsists",
+            "key":url_db.key,
             "short_url":url_db.short_url,
             "long_url": url_db.long_url
         })
         return res
 
-@app.route("/redirect/<shorturl>", methods = ["POST"])
-def redirect_url(shorturl):
-    check = Test.query.filter(Test.short_url == shorturl).first()
+@app.route("/redirect/<key>", methods = ["POST"])
+def redirect_url(key):
+    check = Url.query.filter(Url.key == key).first()
     if check is None:
         msg = "This short url does not exist: "
         return error_message(msg)
@@ -100,17 +104,21 @@ def delete_url():
         msg = "url must be a key in your json request body"
         return error_message(msg)
     url = request.json['url']
-    check = Test.query.filter(Test.short_url == url).first()
+    check = Url.query.filter(Url.key == url).first()
     if check is None:
-        return jsonify( "This url does not exist there is nothing to delete")
+        res = jsonify( "This url does not exist there is nothing to delete")
+        res.status_code = 404
+        return res
     else:
         db.session.delete(check)
         db.session.commit()
-        return jsonify( "Successfully Deleted the url from the database")
+        res = jsonify( "Successfully Deleted the url from the database")
+        res.status_code = 202
+        return res
 
 
 if __name__ == '__main__':
-    from hello import app, db
+    from server import app, db
     app.app_context().push()
     db.create_all()
     app.run(port=5000)
