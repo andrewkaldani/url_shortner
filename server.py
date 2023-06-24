@@ -94,7 +94,7 @@ def add_url():
 def redirect_url(key):
     check = Url.query.filter(Url.key == key).first()
     if check is None:
-        msg = "This short url does not exist: "
+        msg = "This short url does not exist"
         return error_message(msg)
     else:
         return redirect(check.long_url,302)
