@@ -89,7 +89,7 @@ def add_url():
         })
         return res
 
-@app.route("/redirect/<key>", methods = ["POST"])
+@app.route("/redirect/<key>", methods = ["GET"])
 def redirect_url(key):
     check = Url.query.filter(Url.key == key).first()
     if check is None:
