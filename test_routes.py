@@ -53,7 +53,7 @@ def test_add_url():
         "url":"https://gmail.com"
     }
     url_testing = {
-        "url":"https://whatishappening.com"
+        "url":"https://whatishappeninggg.com"
     }
     headers = {
         "Content-Type":'application/json'
