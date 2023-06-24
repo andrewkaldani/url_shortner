@@ -3,8 +3,9 @@ import json
 import pytest
 import coverage
 
-from server import app, shortner, Url
-
+from server import app, shortner, Url, db
+app.app_context().push()
+db.create_all()
 
 @pytest.fixture
 def client():
@@ -16,6 +17,7 @@ def test_database_url():
     assert test_url.key == "wrtzhyr"
     assert test_url.short_url == "https://localhost:wrtzhyr"
     assert test_url.long_url == "https://gmail.com"
+
 
 def test_shortner():
     urla = "https://google.com"
@@ -55,10 +57,21 @@ def test_url_key():
     json_test = {
         "dhu":"https://gmail.com"
     }
+    test = False
     if 'url' in json_test.keys():
-        assert True
-    else:
-        assert False
+        assert test == False
+
+
+def test_query_db():
+    test_url = Url("KtM5543","https://localhost/KtM5543","https://gmail.com")
+    db.session.add(test_url)
+    url_db = Url.query.filter(Url.long_url == "https://gmail.com").first()
+    assert url_db.key == "KtM5543"
+    assert url_db.short_url == "https://localhost:5000/KtM5543"
+    assert url_db.long_url == "https://gmail.com"
+
+
+
 
 
 
