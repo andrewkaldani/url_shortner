@@ -12,6 +12,10 @@ def client():
     with app.test_client() as client:
         yield client
 
+@pytest.fixture
+def client(app):
+    return app.test_client()
+
 def test_database_url():
     test_url = Url("wrtzhyr","https://localhost:wrtzhyr","https://gmail.com")
     assert test_url.key == "wrtzhyr"
@@ -48,11 +52,18 @@ def test_add_url():
     json_test = {
         "url":"https://gmail.com"
     }
+    url_testing = {
+        "url":"https://whatishappening.com"
+    }
     headers = {
         "Content-Type":'application/json'
     }
     res = client.post(url, headers= headers, data = json.dumps(json_test))
     assert res.status_code == 302
+    res = client.post(url, headers= headers, data = json.dumps(url_testing))
+    assert b"url already exsists" in res.get_data()
+
+
 def test_url_key():
     json_test = {
         "dhu":"https://gmail.com"
@@ -69,6 +80,22 @@ def test_query_db():
     assert url_db.key == "KtM5543"
     assert url_db.short_url == "https://localhost:5000/KtM5543"
     assert url_db.long_url == "https://gmail.com"
+
+    url_db = Url.query.filter(Url.long_url == "https://shouldbenone.com").first()
+    assert url_db == None
+
+def test_url_redirect():
+    client = app.test_client()
+    url = "/redirect/KtM5543"
+    res = client.get(url)
+    assert res.status_code == 302
+    url = "/redirect/hello"
+    res = client.get(url)
+    assert b"This short url does not exist" in res.get_data()
+    post_req = client.post(url)
+    assert post_req.status_code == 405
+
+
 
 
 
