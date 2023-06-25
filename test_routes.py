@@ -2,7 +2,8 @@ from flask import Flask
 import json 
 import pytest
 import coverage
-
+import requests
+import requests_mock as rm_module
 from server import app, shortner, Url, db
 app.app_context().push()
 db.create_all()
@@ -29,10 +30,18 @@ def test_shortner():
     assert len(shortner(urla)) == 7
     assert len(shortner(urlb)) == 7
 
-def test_base_route():
+def test_base_route(requests_mock):
     client = app.test_client()
     res = client.get("/")
     assert res.status_code == 302
+
+
+def test_base_route(requests_mock):
+    # Mock the HTTP request
+    requests_mock.get('http://127.0.0.1/', status_code=302)
+    response = requests.get('http://127.0.0.1/')
+    assert response.status_code == 302
+
 
 def test_home_route(): 
     client = app.test_client()
@@ -53,7 +62,7 @@ def test_add_url():
         "url":"https://gmail.com"
     }
     url_testing = {
-        "url":"https://whatishappeninggg.com"
+        "url":"https://whatishappening.com"
     }
     headers = {
         "Content-Type":'application/json'
@@ -62,6 +71,23 @@ def test_add_url():
     assert res.status_code == 302
     res = client.post(url, headers= headers, data = json.dumps(url_testing))
     assert b"url already exsists" in res.get_data()
+
+def test_add_mock(requests_mock):
+    url = "https://127.0.0.1/add"
+    headers = {
+        "Content-Type":'application/json'
+    }
+    expected_text = "url already exsists"
+    requests_mock.post(url,status_code=302,text = json.dumps(expected_text),headers=headers )
+    response = requests.post("https://127.0.0.1/add", headers=headers, json=({"url":"https://espn.com"}))
+    assert response.status_code == 302
+    assert "url already exsists" in response.json()
+    new_text = "Succesfully added to DB"
+    requests_mock.post(url,status_code=302,text = json.dumps(new_text),headers=headers )
+    response = requests.post("https://127.0.0.1/add", headers=headers, json=({"url":"https://gmail.com"}))
+    assert "Succesfully added to DB" in response.json()
+
+
 
 
 def test_url_key():
@@ -78,7 +104,7 @@ def test_query_db():
     db.session.add(test_url)
     url_db = Url.query.filter(Url.long_url == "https://gmail.com").first()
     assert url_db.key == "KtM5543"
-    assert url_db.short_url == "https://localhost:5000/KtM5543"
+    assert url_db.short_url == "https://localhost/KtM5543"
     assert url_db.long_url == "https://gmail.com"
 
     url_db = Url.query.filter(Url.long_url == "https://shouldbenone.com").first()
