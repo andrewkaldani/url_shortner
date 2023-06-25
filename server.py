@@ -74,6 +74,7 @@ def add_url():
         db.session.add(new_url)
         db.session.commit()
         res = json.dumps({
+            "msg":"Successfully Added to DB",
             "key": key,
             "long_url": long_url,
             "short_url": shorten_url
