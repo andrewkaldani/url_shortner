@@ -37,7 +37,6 @@ def test_base_route(requests_mock):
 
 
 def test_base_route(requests_mock):
-    # Mock the HTTP request
     requests_mock.get('http://127.0.0.1/', status_code=302)
     response = requests.get('http://127.0.0.1/')
     assert response.status_code == 302
@@ -86,9 +85,6 @@ def test_add_mock(requests_mock):
     requests_mock.post(url,status_code=302,text = json.dumps(new_text),headers=headers )
     response = requests.post("https://127.0.0.1/add", headers=headers, json=({"url":"https://gmail.com"}))
     assert "Succesfully added to DB" in response.json()
-
-
-
 
 def test_url_key():
     json_test = {
