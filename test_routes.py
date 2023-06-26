@@ -3,8 +3,9 @@ import json
 import pytest
 import coverage
 import requests
-import requests_mock
-from server import app, shortner, Url, db
+import requests_mock 
+from server import app, shortner, db
+from models import Url, db
 app.app_context().push()
 db.create_all()
 
@@ -23,17 +24,7 @@ def test_database_url():
     assert test_url.short_url == "https://localhost:wrtzhyr"
     assert test_url.long_url == "https://gmail.com"
 
-def test_query_db():
-    test_url = Url("KtM5543","https://localhost/KtM5543","https://gmail.com")
-    db.session.add(test_url)
-    url_db = Url.query.filter(Url.long_url == "https://gmail.com").first()
-    assert url_db.key == "KtM5543"
-    assert url_db.short_url == "https://localhost/KtM5543"
-    assert url_db.long_url == "https://gmail.com"
 
-    url_db = Url.query.filter(Url.long_url == "https://shouldbenone.com").first()
-    assert url_db == None
-    
 def test_shortner():
     urla = "https://google.com"
     urlb = "https://codingchallenges.fyi/challenges/challenge-url-shortener"
@@ -105,6 +96,16 @@ def test_url_key():
         assert test == False
 
 
+def test_query_db():
+    test_url = Url("KtM5543","https://localhost/KtM5543","https://gmail.com")
+    db.session.add(test_url)
+    url_db = Url.query.filter(Url.long_url == "https://gmail.com").first()
+    assert url_db.key == "KtM5543"
+    assert url_db.short_url == "https://localhost:5000/KtM5543"
+    assert url_db.long_url == "https://gmail.com"
+
+    url_db = Url.query.filter(Url.long_url == "https://shouldbenone.com").first()
+    assert url_db == None
 
 def test_url_redirect():
     client = app.test_client()
@@ -116,7 +117,6 @@ def test_url_redirect():
     assert b"This short url does not exist" in res.get_data()
     post_req = client.post(url)
     assert post_req.status_code == 405
-
 
 
 
