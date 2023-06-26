@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, redirect, Response
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
+from models import Url, db
 import hashlib
 import base64
 import random
@@ -12,17 +13,17 @@ load_dotenv()
 app.config['SQLALCHEMY_DATABASE_URI']= os.getenv("DB_URI")
 app.config["SQLALCHEMY_ECHO"] = True
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db = SQLAlchemy(app)
-
-class Url(db.Model):
-    id = db.Column(db.BigInteger, primary_key=True)
-    key = db.Column(db.String(100))
-    short_url = db.Column(db.String(100))
-    long_url = db.Column(db.Text)
-    def __init__(self, key, short_url, long_url):
-        self.key = key 
-        self.short_url = short_url
-        self.long_url = long_url
+# db = SQLAlchemy(app)
+db.init_app(app)
+# class Url(db.Model):
+#     id = db.Column(db.BigInteger, primary_key=True)
+#     key = db.Column(db.String(100))
+#     short_url = db.Column(db.String(100))
+#     long_url = db.Column(db.Text)
+#     def __init__(self, key, short_url, long_url):
+#         self.key = key 
+#         self.short_url = short_url
+#         self.long_url = long_url
 
 def shortner(long_url):
     hashed_string = hashlib.sha256(long_url.encode('utf-8')).digest()
