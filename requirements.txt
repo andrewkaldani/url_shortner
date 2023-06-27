@@ -5,3 +5,5 @@ pytest==7.4.0
 python-dotenv==1.0.0
 Requests==2.31.0
 requests_mock==1.11.0
+hashlib ==3.11.4
+SQLAlchemy =2.0.17
