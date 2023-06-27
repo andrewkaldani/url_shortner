@@ -39,6 +39,15 @@ def error_message(message):
     res = json.dumps({'message':message})
     return Response(res, status=400, mimetype='application/json')
 
+def success_message(message, key, short_url, long_url):
+    res = json.dumps({
+            "msg":message,
+            "key":key,
+            "short_url":short_url,
+            "long_url": long_url
+        })
+    return Response(res, status=302, mimetype='application/json')
+
 @app.route("/", methods = ["GET"])
 def challenge():
     challenge =  "https://codingchallenges.fyi/challenges/challenge-url-shortener"
@@ -76,22 +85,26 @@ def add_url():
         new_url  = Actions.add_to_db(key,shorten_url,long_url)
         db.session.add(new_url)
         db.session.commit()
-        res = json.dumps({
-            "msg":"Successfully Added to DB",
-            "key": key,
-            "long_url": long_url,
-            "short_url": shorten_url
-        })
-        return Response(res, status=302, mimetype='application/json')
+        msg = "Successfully Added to DB"
+        # res = json.dumps({
+        #     "msg":"Successfully Added to DB",
+        #     "key": key,
+        #     "long_url": long_url,
+        #     "short_url": shorten_url
+        # })
+        # return Response(res, status=302, mimetype='application/json')
+        return success_message(msg, key,shorten_url,long_url)
 
     else:
-        res = json.dumps({
-            "msg":"url already exsists",
-            "key":url_db.key,
-            "short_url":url_db.short_url,
-            "long_url": url_db.long_url
-        })
-        return Response(res, status=302, mimetype='application/json')
+        msg = "url already exsists"
+        # res = json.dumps({
+        #     "msg":"url already exsists",
+        #     "key":url_db.key,
+        #     "short_url":url_db.short_url,
+        #     "long_url": url_db.long_url
+        # })
+        return success_message(msg, url_db.key,url_db.short_url,url_db.long_url)
+
 
 
 @app.route("/redirect/<key>", methods = ["GET"])
@@ -113,7 +126,8 @@ def delete_url():
         msg = "url must be a key in your json request body"
         return error_message(msg)
     url = request.json['url']
-    check = Url.query.filter((Url.key == url)|(Url.long_url==url)).first()
+    #check = Url.query.filter((Url.key == url)|(Url.long_url==url)).first()
+    check = Actions.query_db(url)
     if check is None:
         res = json.dumps( "This url does not exist there is nothing to delete")
         return Response(res, status=404, mimetype='application/json')
