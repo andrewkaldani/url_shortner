@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, redirect, Response
+from flask import Flask, request, redirect, Response
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from models import Url, db
@@ -43,7 +43,7 @@ def challenge():
     challenge =  "https://codingchallenges.fyi/challenges/challenge-url-shortener"
     return redirect(challenge,302)
 
-@app.route("/home")
+@app.route("/home", methods = ["GET"])
 def home():
     msg = ("Welcome to my URL shortner! This is part of John Crickett's coding "
            "challenges. You can view this challenge here " 
