@@ -2,6 +2,7 @@ from flask import Flask, request, redirect, Response
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from models import Url, db
+from db_actions import Actions
 import hashlib
 import base64
 import random
@@ -66,12 +67,13 @@ def add_url():
         msg = "url must be a key in your json request body"
         return error_message(msg)
     long_url = request.json["url"]
-
-    url_db = Url.query.filter(Url.long_url == long_url).first()
+    #url_db = Url.query.filter(Url.long_url == long_url).first()
+    url_db = Actions.query_db(long_url)
     if url_db is None:
         key = shortner(long_url)
         shorten_url = "https://localhost:5000/"+key
-        new_url = Url(key=key, short_url=shorten_url, long_url= long_url)
+        # new_url = Url(key=key, short_url=shorten_url, long_url= long_url)
+        new_url  = Actions.add_to_db(key,shorten_url,long_url)
         db.session.add(new_url)
         db.session.commit()
         res = json.dumps({
@@ -94,7 +96,8 @@ def add_url():
 
 @app.route("/redirect/<key>", methods = ["GET"])
 def redirect_url(key):
-    check = Url.query.filter(Url.key == key).first()
+    # check = Url.query.filter(Url.key == key).first()
+    check = Actions.query_db(key)
     if check is None:
         msg = "This short url does not exist"
         return error_message(msg)
