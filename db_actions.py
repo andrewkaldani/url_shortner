@@ -7,7 +7,7 @@ class Actions:
         self.shorten_url = shorten_url
         self.long_url = long_url
 
-    def query_db(query_key:str) -> Url:
+    def query_db(query_key:str)->Url:
         query = Url.query.filter((Url.key == query_key)|(Url.long_url==query_key)).first()
         return query
     def add_to_db(key:str,shorten_url:str,long_url:str) -> Url:
